@@ -1,5 +1,7 @@
 name: "Env Replace"
 description: "Change environment variables during actions"
+icon: "settings"
+color: "blue"
 inputs:
   key:
     description: "env key"
