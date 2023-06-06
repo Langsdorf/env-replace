@@ -19,7 +19,7 @@ The file to replace the key/value in. Default `"./.env"`
 ## Example usage
 
 ```yaml
-uses: langsdorf/env-replace@v1
+uses: Langsdorf/env-replace@v1.0.0
 with:
   key: 'API_URL'
   value: 'https://api.example.com'
