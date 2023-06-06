@@ -1,0 +1,16 @@
+name: "Env Replace"
+description: "Change environment variables during actions"
+inputs:
+  key:
+    description: "env key"
+    required: true
+  value:
+    description: "env value"
+    required: true
+  file:
+    description: "env file path"
+    required: false
+    default: ".env"
+runs:
+  using: "node16"
+  main: "dist/index.js"
