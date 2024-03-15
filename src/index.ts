@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import * as fs from "fs";
+import * as fs from "fs/promises";
 
 function getEnvFile(lines: string[]) {
 	const env = new Map<string, string>();
@@ -24,8 +24,8 @@ function getEnvFile(lines: string[]) {
 	return env;
 }
 
-function runMatchSecrets(file: string) {
-	const envContent = fs.readFileSync(file, "utf8");
+async function runMatchSecrets(file: string) {
+	const envContent = await fs.readFile(file, "utf8");
 
 	const env = getEnvFile(envContent.split("\n"));
 	const secrets = getEnvFile(core.getInput("secrets").split("\n"));
@@ -49,7 +49,7 @@ function runMatchSecrets(file: string) {
 
 	core.setOutput("result", result);
 
-	fs.writeFileSync(file, result);
+	await fs.writeFile(file, result);
 
 	return result;
 }
@@ -63,7 +63,7 @@ async function run() {
 		const secrets = core.getInput("secrets");
 
 		if (matchSecrets && secrets) {
-			return runMatchSecrets(file);
+			return await runMatchSecrets(file);
 		}
 
 		if (!key || !value || !file) {
@@ -72,7 +72,7 @@ async function run() {
 
 		core.info(`Setting ${key} to ${value} in ${file}`);
 
-		const envContent = fs.readFileSync(file, "utf8");
+		const envContent = await fs.readFile(file, "utf8");
 
 		const env = getEnvFile(envContent.split("\n"));
 
@@ -87,7 +87,7 @@ async function run() {
 			.map((k) => `${k}=${env.get(k)}`)
 			.join("\n");
 
-		fs.writeFileSync(file, result);
+		await fs.writeFile(file, result);
 
 		core.info(`Successfully set ${key} to ${value} in ${file}`);
 

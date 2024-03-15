@@ -40,7 +40,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(186));
-const fs = __importStar(__nccwpck_require__(147));
+const fs = __importStar(__nccwpck_require__(292));
 function getEnvFile(lines) {
     const env = new Map();
     for (const line of lines) {
@@ -58,24 +58,26 @@ function getEnvFile(lines) {
     return env;
 }
 function runMatchSecrets(file) {
-    const envContent = fs.readFileSync(file, "utf8");
-    const env = getEnvFile(envContent.split("\n"));
-    const secrets = getEnvFile(core.getInput("secrets").split("\n"));
-    core.info(`Secrets: ${Array.from(secrets.keys()).join(", ")}`);
-    core.info(`Env: ${Array.from(env.keys()).join(", ")}`);
-    const matches = new Map();
-    for (const key of secrets.keys()) {
-        if (env.has(key) && secrets.get(key) !== env.get(key)) {
-            matches.set(key, env.get(key));
+    return __awaiter(this, void 0, void 0, function* () {
+        const envContent = yield fs.readFile(file, "utf8");
+        const env = getEnvFile(envContent.split("\n"));
+        const secrets = getEnvFile(core.getInput("secrets").split("\n"));
+        core.info(`Secrets: ${Array.from(secrets.keys()).join(", ")}`);
+        core.info(`Env: ${Array.from(env.keys()).join(", ")}`);
+        const matches = new Map();
+        for (const key of secrets.keys()) {
+            if (env.has(key) && secrets.get(key) !== env.get(key)) {
+                matches.set(key, env.get(key));
+            }
         }
-    }
-    core.info(`Found ${matches.size} matches`);
-    const result = Array.from(matches.keys())
-        .map((key) => `${key}=${matches.get(key)}`)
-        .join("\n");
-    core.setOutput("result", result);
-    fs.writeFileSync(file, result);
-    return result;
+        core.info(`Found ${matches.size} matches`);
+        const result = Array.from(matches.keys())
+            .map((key) => `${key}=${matches.get(key)}`)
+            .join("\n");
+        core.setOutput("result", result);
+        yield fs.writeFile(file, result);
+        return result;
+    });
 }
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -86,13 +88,13 @@ function run() {
             const matchSecrets = core.getInput("match-secrets") === "true";
             const secrets = core.getInput("secrets");
             if (matchSecrets && secrets) {
-                return runMatchSecrets(file);
+                return yield runMatchSecrets(file);
             }
             if (!key || !value || !file) {
                 throw new Error("Missing required input");
             }
             core.info(`Setting ${key} to ${value} in ${file}`);
-            const envContent = fs.readFileSync(file, "utf8");
+            const envContent = yield fs.readFile(file, "utf8");
             const env = getEnvFile(envContent.split("\n"));
             if (env.has(key) && env.get(key) === value) {
                 core.info(`${key} is already set to ${value} in ${file}`);
@@ -102,7 +104,7 @@ function run() {
             const result = Array.from(env.keys())
                 .map((k) => `${k}=${env.get(k)}`)
                 .join("\n");
-            fs.writeFileSync(file, result);
+            yield fs.writeFile(file, result);
             core.info(`Successfully set ${key} to ${value} in ${file}`);
             core.setOutput("result", result);
         }
@@ -2847,6 +2849,14 @@ module.exports = require("events");
 
 "use strict";
 module.exports = require("fs");
+
+/***/ }),
+
+/***/ 292:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("fs/promises");
 
 /***/ }),
 
