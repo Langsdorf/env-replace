@@ -67,7 +67,7 @@ function runMatchSecrets(file) {
         const matches = new Map();
         for (const key of secrets.keys()) {
             if (env.has(key) && secrets.get(key) !== env.get(key)) {
-                matches.set(key, env.get(key));
+                matches.set(key, secrets.get(key));
             }
         }
         core.info(`Found ${matches.size} matches`);
