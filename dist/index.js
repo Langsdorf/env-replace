@@ -43,30 +43,32 @@ const core = __importStar(__nccwpck_require__(186));
 const fs = __importStar(__nccwpck_require__(147));
 function getEnvFile(lines) {
     const env = new Map();
-    lines.forEach((line) => {
+    for (const line of lines) {
         if (line.startsWith("#")) {
-            return;
+            continue;
         }
         const firstEqualIndex = line.indexOf("=");
         if (firstEqualIndex === -1) {
-            return;
+            continue;
         }
         const key = line.substring(0, firstEqualIndex);
         const value = line.substring(firstEqualIndex + 1);
         env.set(key, value);
-    });
+    }
     return env;
 }
 function runMatchSecrets(file) {
     const envContent = fs.readFileSync(file, "utf8");
     const env = getEnvFile(envContent.split("\n"));
     const secrets = getEnvFile(core.getInput("secrets").split("\n"));
+    core.info(`Secrets: ${Array.from(secrets.keys()).join(", ")}`);
+    core.info(`Env: ${Array.from(env.keys()).join(", ")}`);
     const matches = new Map();
-    env.forEach((value, key) => {
-        if (secrets.has(key) && secrets.get(key) === value) {
-            matches.set(key, value);
+    for (const key of secrets.keys()) {
+        if (env.has(key) && secrets.get(key) === env.get(key)) {
+            matches.set(key, env.get(key));
         }
-    });
+    }
     core.info(`Found ${matches.size} matches`);
     const result = Array.from(matches.keys())
         .map((key) => `${key}=${matches.get(key)}`)
@@ -98,7 +100,7 @@ function run() {
             }
             env.set(key, value);
             const result = Array.from(env.keys())
-                .map((key) => `${key}=${env.get(key)}`)
+                .map((k) => `${k}=${env.get(k)}`)
                 .join("\n");
             fs.writeFileSync(file, result);
             core.info(`Successfully set ${key} to ${value} in ${file}`);

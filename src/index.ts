@@ -2,24 +2,24 @@ import * as core from "@actions/core";
 import * as fs from "fs";
 
 function getEnvFile(lines: string[]) {
-	const env = new Map();
+	const env = new Map<string, string>();
 
-	lines.forEach((line) => {
+	for (const line of lines) {
 		if (line.startsWith("#")) {
-			return;
+			continue;
 		}
 
 		const firstEqualIndex = line.indexOf("=");
 
 		if (firstEqualIndex === -1) {
-			return;
+			continue;
 		}
 
 		const key = line.substring(0, firstEqualIndex);
 		const value = line.substring(firstEqualIndex + 1);
 
 		env.set(key, value);
-	});
+	}
 
 	return env;
 }
@@ -30,13 +30,16 @@ function runMatchSecrets(file: string) {
 	const env = getEnvFile(envContent.split("\n"));
 	const secrets = getEnvFile(core.getInput("secrets").split("\n"));
 
+	core.info(`Secrets: ${Array.from(secrets.keys()).join(", ")}`);
+	core.info(`Env: ${Array.from(env.keys()).join(", ")}`);
+
 	const matches = new Map();
 
-	env.forEach((value, key) => {
-		if (secrets.has(key) && secrets.get(key) === value) {
-			matches.set(key, value);
+	for (const key of secrets.keys()) {
+		if (env.has(key) && secrets.get(key) === env.get(key)) {
+			matches.set(key, env.get(key));
 		}
-	});
+	}
 
 	core.info(`Found ${matches.size} matches`);
 
@@ -81,7 +84,7 @@ async function run() {
 		env.set(key, value);
 
 		const result = Array.from(env.keys())
-			.map((key) => `${key}=${env.get(key)}`)
+			.map((k) => `${k}=${env.get(k)}`)
 			.join("\n");
 
 		fs.writeFileSync(file, result);
