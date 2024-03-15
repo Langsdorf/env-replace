@@ -25,6 +25,8 @@ jobs:
           key: "HELLO"
           value: "TEST"
           file: "./src/tests/.env"
+      - run: |
+          cat ./src/tests/.env | grep "HELLO"
   test-match-secrets:
     runs-on: ubuntu-latest
     steps:
@@ -35,3 +37,5 @@ jobs:
           secrets: |
             HELLO=${{ secrets.HELLO }}
           file: "./src/tests/.env"
+      - run: |
+          cat ./src/tests/.env | grep "HELLO"
