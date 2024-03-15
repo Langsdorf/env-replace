@@ -6,14 +6,21 @@ branding:
 inputs:
   key:
     description: "env key"
-    required: true
+    required: false
   value:
     description: "env value"
-    required: true
+    required: false
   file:
     description: "env file path"
     required: false
     default: ".env"
+  match-secrets:
+    description: "match actions secrets"
+    required: false
+    default: "false"
+  secrets:
+    description: "secrets"
+    required: false
 runs:
   using: "node16"
   main: "dist/index.js"
