@@ -34,7 +34,8 @@ jobs:
       - uses: ./
         with:
           replace-all: |
-            HELLO=TEST
+            NEW=VALUE
           file: "./src/tests/.env"
+          upsert: true
       - run: |
-          cat ./src/tests/.env | grep "TEST"
+          cat ./src/tests/.env | grep "VALUE"

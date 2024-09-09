@@ -29,6 +29,7 @@ async function runReplaceAll(file: string, replaceAll: string) {
 
 	const env = getEnvFile(envContent.split("\n"));
 	const replaceMap = getEnvFile(replaceAll.split("\n"));
+	const upsert = core.getBooleanInput("upsert", { required: false });
 
 	core.info(`Replace list: ${Array.from(replaceMap.keys()).join(", ")}`);
 	core.info(`Env: ${Array.from(env.keys()).join(", ")}`);
@@ -36,9 +37,10 @@ async function runReplaceAll(file: string, replaceAll: string) {
 	const matches = new Map();
 
 	for (const key of replaceMap.keys()) {
-		if (env.has(key) && replaceMap.get(key) !== env.get(key)) {
-			matches.set(key, replaceMap.get(key));
-		}
+		if (replaceMap.get(key) === env.get(key)) continue;
+		if (!upsert && !env.has(key)) continue;
+
+		matches.set(key, replaceMap.get(key));
 	}
 
 	core.info(`Found ${matches.size} matches`);

@@ -62,13 +62,16 @@ function runReplaceAll(file, replaceAll) {
         const envContent = yield fs.readFile(file, "utf8");
         const env = getEnvFile(envContent.split("\n"));
         const replaceMap = getEnvFile(replaceAll.split("\n"));
+        const upsert = core.getBooleanInput("upsert", { required: false });
         core.info(`Replace list: ${Array.from(replaceMap.keys()).join(", ")}`);
         core.info(`Env: ${Array.from(env.keys()).join(", ")}`);
         const matches = new Map();
         for (const key of replaceMap.keys()) {
-            if (env.has(key) && replaceMap.get(key) !== env.get(key)) {
-                matches.set(key, replaceMap.get(key));
-            }
+            if (replaceMap.get(key) === env.get(key))
+                continue;
+            if (!upsert && !env.has(key))
+                continue;
+            matches.set(key, replaceMap.get(key));
         }
         core.info(`Found ${matches.size} matches`);
         const result = Array.from(matches.keys())

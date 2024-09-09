@@ -17,6 +17,10 @@ inputs:
   replace-all:
     description: "list of key value pairs to replace"
     required: false
+  upsert:
+    description: "upsert key value pair"
+    required: false
+    default: "false"
 runs:
   using: "node16"
   main: "dist/index.js"
