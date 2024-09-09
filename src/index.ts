@@ -24,20 +24,20 @@ function getEnvFile(lines: string[]) {
 	return env;
 }
 
-async function runMatchSecrets(file: string) {
+async function runReplaceAll(file: string, replaceAll: string) {
 	const envContent = await fs.readFile(file, "utf8");
 
 	const env = getEnvFile(envContent.split("\n"));
-	const secrets = getEnvFile(core.getInput("secrets").split("\n"));
+	const replaceMap = getEnvFile(replaceAll.split("\n"));
 
-	core.info(`Secrets: ${Array.from(secrets.keys()).join(", ")}`);
+	core.info(`Replace list: ${Array.from(replaceMap.keys()).join(", ")}`);
 	core.info(`Env: ${Array.from(env.keys()).join(", ")}`);
 
 	const matches = new Map();
 
-	for (const key of secrets.keys()) {
-		if (env.has(key) && secrets.get(key) !== env.get(key)) {
-			matches.set(key, secrets.get(key));
+	for (const key of replaceMap.keys()) {
+		if (env.has(key) && replaceMap.get(key) !== env.get(key)) {
+			matches.set(key, replaceMap.get(key));
 		}
 	}
 
@@ -59,11 +59,10 @@ async function run() {
 		const key = core.getInput("key");
 		const value = core.getInput("value");
 		const file = core.getInput("file");
-		const matchSecrets = core.getInput("match-secrets") === "true";
-		const secrets = core.getInput("secrets");
+		const replaceAll = core.getInput("replace-all");
 
-		if (matchSecrets && secrets) {
-			return await runMatchSecrets(file);
+		if (replaceAll) {
+			return await runReplaceAll(file, replaceAll);
 		}
 
 		if (!key || !value || !file) {

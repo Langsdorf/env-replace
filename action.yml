@@ -14,12 +14,8 @@ inputs:
     description: "env file path"
     required: false
     default: ".env"
-  match-secrets:
-    description: "match actions secrets"
-    required: false
-    default: "false"
-  secrets:
-    description: "secrets"
+  replace-all:
+    description: "list of key value pairs to replace"
     required: false
 runs:
   using: "node16"

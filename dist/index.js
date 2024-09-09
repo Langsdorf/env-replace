@@ -57,17 +57,17 @@ function getEnvFile(lines) {
     }
     return env;
 }
-function runMatchSecrets(file) {
+function runReplaceAll(file, replaceAll) {
     return __awaiter(this, void 0, void 0, function* () {
         const envContent = yield fs.readFile(file, "utf8");
         const env = getEnvFile(envContent.split("\n"));
-        const secrets = getEnvFile(core.getInput("secrets").split("\n"));
-        core.info(`Secrets: ${Array.from(secrets.keys()).join(", ")}`);
+        const replaceMap = getEnvFile(replaceAll.split("\n"));
+        core.info(`Replace list: ${Array.from(replaceMap.keys()).join(", ")}`);
         core.info(`Env: ${Array.from(env.keys()).join(", ")}`);
         const matches = new Map();
-        for (const key of secrets.keys()) {
-            if (env.has(key) && secrets.get(key) !== env.get(key)) {
-                matches.set(key, secrets.get(key));
+        for (const key of replaceMap.keys()) {
+            if (env.has(key) && replaceMap.get(key) !== env.get(key)) {
+                matches.set(key, replaceMap.get(key));
             }
         }
         core.info(`Found ${matches.size} matches`);
@@ -85,10 +85,9 @@ function run() {
             const key = core.getInput("key");
             const value = core.getInput("value");
             const file = core.getInput("file");
-            const matchSecrets = core.getInput("match-secrets") === "true";
-            const secrets = core.getInput("secrets");
-            if (matchSecrets && secrets) {
-                return yield runMatchSecrets(file);
+            const replaceAll = core.getInput("replace-all");
+            if (replaceAll) {
+                return yield runReplaceAll(file, replaceAll);
             }
             if (!key || !value || !file) {
                 throw new Error("Missing required input");

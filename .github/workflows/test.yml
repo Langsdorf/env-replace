@@ -26,16 +26,15 @@ jobs:
           value: "TEST"
           file: "./src/tests/.env"
       - run: |
-          cat ./src/tests/.env | grep "HELLO"
+          cat ./src/tests/.env | grep "TEST"
   test-match-secrets:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: ./
         with:
-          match-secrets: "true"
-          secrets: |
-            HELLO=${{ secrets.HELLO }}
+          replace-all: |
+            HELLO=TEST
           file: "./src/tests/.env"
       - run: |
-          cat ./src/tests/.env | grep "HELLO"
+          cat ./src/tests/.env | grep "TEST"
