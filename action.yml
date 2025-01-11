@@ -18,7 +18,11 @@ inputs:
     description: "list of key value pairs to replace"
     required: false
   upsert:
-    description: "upsert key value pair"
+    description: "upsert key value pair when replace-all is set"
+    required: false
+    default: "false"
+  remove-non-matches:
+    description: "remove non-matching key value pairs when replace-all is set"
     required: false
     default: "false"
 runs:
