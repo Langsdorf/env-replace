@@ -1,4 +1,4 @@
-import * as fs from "fs/promises";
+import * as fs from "node:fs/promises";
 
 type Log = {
 	info: (message: string) => void;
@@ -32,6 +32,7 @@ interface ReplaceAllOptions {
 
 export async function runReplaceAll(
 	file: string,
+	output: string,
 	replaceAll: string,
 	{ logger, removeNonMatches, upsert, write }: ReplaceAllOptions
 ) {
@@ -69,7 +70,7 @@ export async function runReplaceAll(
 		.map((key) => `${key}=${matches.get(key)}`)
 		.join("\n");
 
-	if (write) await fs.writeFile(file, result);
+	if (write) await fs.writeFile(output, result);
 
 	return result;
 }
@@ -83,6 +84,7 @@ export async function runReplaceOne(
 	key: string,
 	value: string,
 	file: string,
+	output: string,
 	{ logger, write }: ReplaceOneOptions
 ) {
 	logger.info(`Setting ${key} to ${value} in ${file}`);
@@ -102,7 +104,7 @@ export async function runReplaceOne(
 		.map((k) => `${k}=${env.get(k)}`)
 		.join("\n");
 
-	if (write) await fs.writeFile(file, result);
+	if (write) await fs.writeFile(output, result);
 
 	logger.info(`Successfully set ${key} to ${value} in ${file}`);
 

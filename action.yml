@@ -11,7 +11,11 @@ inputs:
     description: "env value"
     required: false
   file:
-    description: "env file path"
+    description: "input file path"
+    required: false
+    default: ".env"
+  output:
+    description: "output file path"
     required: false
     default: ".env"
   replace-all:

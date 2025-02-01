@@ -42,19 +42,20 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(186));
 const utils_1 = __nccwpck_require__(651);
 function run() {
-    var _a, _b;
+    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const key = core.getInput("key");
             const value = core.getInput("value");
             const file = core.getInput("file");
+            const output = (_a = core.getInput("output")) !== null && _a !== void 0 ? _a : file;
             const replaceAll = core.getInput("replace-all");
-            const upsert = (_a = core.getBooleanInput("upsert", { required: false })) !== null && _a !== void 0 ? _a : false;
-            const removeNonMatches = (_b = core.getBooleanInput("remove-non-matches", {
+            const upsert = (_b = core.getBooleanInput("upsert", { required: false })) !== null && _b !== void 0 ? _b : false;
+            const removeNonMatches = (_c = core.getBooleanInput("remove-non-matches", {
                 required: false,
-            })) !== null && _b !== void 0 ? _b : false;
+            })) !== null && _c !== void 0 ? _c : false;
             if (replaceAll) {
-                const result = yield (0, utils_1.runReplaceAll)(file, replaceAll, {
+                const result = yield (0, utils_1.runReplaceAll)(file, output, replaceAll, {
                     logger: core,
                     removeNonMatches,
                     upsert,
@@ -65,7 +66,7 @@ function run() {
             }
             if (!key || !value || !file)
                 throw new Error("Missing required input");
-            const result = yield (0, utils_1.runReplaceOne)(key, value, file, {
+            const result = yield (0, utils_1.runReplaceOne)(key, value, file, output, {
                 logger: core,
                 write: true,
             });
@@ -120,7 +121,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.runReplaceOne = exports.runReplaceAll = exports.getEnvFile = void 0;
-const fs = __importStar(__nccwpck_require__(292));
+const fs = __importStar(__nccwpck_require__(977));
 function getEnvFile(lines) {
     const env = new Map();
     for (const line of lines) {
@@ -136,7 +137,7 @@ function getEnvFile(lines) {
     return env;
 }
 exports.getEnvFile = getEnvFile;
-function runReplaceAll(file, replaceAll, { logger, removeNonMatches, upsert, write }) {
+function runReplaceAll(file, output, replaceAll, { logger, removeNonMatches, upsert, write }) {
     return __awaiter(this, void 0, void 0, function* () {
         const envContent = yield fs.readFile(file, "utf8");
         const env = getEnvFile(envContent.split("\n"));
@@ -163,12 +164,12 @@ function runReplaceAll(file, replaceAll, { logger, removeNonMatches, upsert, wri
             .map((key) => `${key}=${matches.get(key)}`)
             .join("\n");
         if (write)
-            yield fs.writeFile(file, result);
+            yield fs.writeFile(output, result);
         return result;
     });
 }
 exports.runReplaceAll = runReplaceAll;
-function runReplaceOne(key, value, file, { logger, write }) {
+function runReplaceOne(key, value, file, output, { logger, write }) {
     return __awaiter(this, void 0, void 0, function* () {
         logger.info(`Setting ${key} to ${value} in ${file}`);
         const envContent = yield fs.readFile(file, "utf8");
@@ -182,7 +183,7 @@ function runReplaceOne(key, value, file, { logger, write }) {
             .map((k) => `${k}=${env.get(k)}`)
             .join("\n");
         if (write)
-            yield fs.writeFile(file, result);
+            yield fs.writeFile(output, result);
         logger.info(`Successfully set ${key} to ${value} in ${file}`);
         return result;
     });
@@ -2926,14 +2927,6 @@ module.exports = require("fs");
 
 /***/ }),
 
-/***/ 292:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("fs/promises");
-
-/***/ }),
-
 /***/ 685:
 /***/ ((module) => {
 
@@ -2955,6 +2948,14 @@ module.exports = require("https");
 
 "use strict";
 module.exports = require("net");
+
+/***/ }),
+
+/***/ 977:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:fs/promises");
 
 /***/ }),
 

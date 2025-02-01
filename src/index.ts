@@ -6,6 +6,7 @@ async function run() {
 		const key = core.getInput("key");
 		const value = core.getInput("value");
 		const file = core.getInput("file");
+		const output = core.getInput("output") ?? file;
 		const replaceAll = core.getInput("replace-all");
 		const upsert = core.getBooleanInput("upsert", { required: false }) ?? false;
 		const removeNonMatches =
@@ -14,7 +15,7 @@ async function run() {
 			}) ?? false;
 
 		if (replaceAll) {
-			const result = await runReplaceAll(file, replaceAll, {
+			const result = await runReplaceAll(file, output, replaceAll, {
 				logger: core,
 				removeNonMatches,
 				upsert,
@@ -28,7 +29,7 @@ async function run() {
 
 		if (!key || !value || !file) throw new Error("Missing required input");
 
-		const result = await runReplaceOne(key, value, file, {
+		const result = await runReplaceOne(key, value, file, output, {
 			logger: core,
 			write: true,
 		});
