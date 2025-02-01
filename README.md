@@ -29,6 +29,10 @@ The value to replace
 
 The file to replace the key/value in. Default `"./.env"`
 
+### `output`
+
+The file to output the new contents to. Default `"./.env"`
+
 ### `replace-all`
 
 List of secrets to replace.

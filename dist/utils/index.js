@@ -33,7 +33,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.runReplaceOne = exports.runReplaceAll = exports.getEnvFile = void 0;
-const fs = __importStar(require("fs/promises"));
+const fs = __importStar(require("node:fs/promises"));
 function getEnvFile(lines) {
     const env = new Map();
     for (const line of lines) {
@@ -49,7 +49,7 @@ function getEnvFile(lines) {
     return env;
 }
 exports.getEnvFile = getEnvFile;
-function runReplaceAll(file, replaceAll, { logger, removeNonMatches, upsert, write }) {
+function runReplaceAll(file, output, replaceAll, { logger, removeNonMatches, upsert, write }) {
     return __awaiter(this, void 0, void 0, function* () {
         const envContent = yield fs.readFile(file, "utf8");
         const env = getEnvFile(envContent.split("\n"));
@@ -76,12 +76,12 @@ function runReplaceAll(file, replaceAll, { logger, removeNonMatches, upsert, wri
             .map((key) => `${key}=${matches.get(key)}`)
             .join("\n");
         if (write)
-            yield fs.writeFile(file, result);
+            yield fs.writeFile(output, result);
         return result;
     });
 }
 exports.runReplaceAll = runReplaceAll;
-function runReplaceOne(key, value, file, { logger, write }) {
+function runReplaceOne(key, value, file, output, { logger, write }) {
     return __awaiter(this, void 0, void 0, function* () {
         logger.info(`Setting ${key} to ${value} in ${file}`);
         const envContent = yield fs.readFile(file, "utf8");
@@ -95,7 +95,7 @@ function runReplaceOne(key, value, file, { logger, write }) {
             .map((k) => `${k}=${env.get(k)}`)
             .join("\n");
         if (write)
-            yield fs.writeFile(file, result);
+            yield fs.writeFile(output, result);
         logger.info(`Successfully set ${key} to ${value} in ${file}`);
         return result;
     });
