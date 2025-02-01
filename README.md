@@ -6,7 +6,7 @@ Changes the file during build (useful for replacing environment variables in a f
 # Initial .env file:
 # API_URL=https://api.example.com
 # API_KEY=123456
-uses: Langsdorf/env-replace@v1.1.7
+uses: Langsdorf/env-replace@v1.2.7
 with:
   key: "API_URL"
   value: "https://api.staging.example.com"
@@ -60,7 +60,7 @@ The new file contents
 ### With key and value
 
 ```yaml
-uses: Langsdorf/env-replace@v1.1.7
+uses: Langsdorf/env-replace@v1.2.7
 with:
   key: "API_URL"
   value: "https://api.example.com"
@@ -69,7 +69,7 @@ with:
 ### With replace-all
 
 ```yaml
-uses: Langsdorf/env-replace@v1.1.7
+uses: Langsdorf/env-replace@v1.2.7
 with:
   replace-all: |
     API_URL=https://api.example.com
