@@ -26,8 +26,9 @@ jobs:
           key: "HELLO"
           value: "TEST"
           file: "./src/tests/.env"
+          output: "./src/tests/.env.out"
       - run: |
-          cat ./src/tests/.env | grep "TEST"
+          cat ./src/tests/.env.out | grep "TEST"
   test-match-secrets:
     runs-on: ubuntu-latest
     needs: build
@@ -40,5 +41,6 @@ jobs:
           file: "./src/tests/.env"
           upsert: true
           remove-non-matches: true
+          output: "./src/tests/.env.out"
       - run: |
-          cat ./src/tests/.env | grep "VALUE"
+          cat ./src/tests/.env.out | grep "VALUE"
